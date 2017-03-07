@@ -44,7 +44,7 @@
 }
 
 -(void)onClick0:(UIButton *)btn{
-    
+    NSLog(@"%@", @"哈哈");
 }
 
 -(void)onClick1:(UIButton *)btn{
