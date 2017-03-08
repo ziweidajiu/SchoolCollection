@@ -8,8 +8,14 @@
 
 #import "OneViewController.h"
 #import "UINavigationBar+Awesome.h"
+#import "HeaderView.h"
+#import <MJRefresh/MJRefresh.h>
 
-@interface OneViewController ()
+@interface OneViewController () <UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate>
+
+@property (nonatomic, strong)HeaderView *view1;
+
+@property (nonatomic, strong)UITableView *tableView;
 
 @end
 
@@ -20,6 +26,7 @@
     // Do any additional setup after loading the view.
     [self setNavigationView];
     [self createView];
+    [self createTableView];
 }
 
 #pragma -mark 设置navigation
@@ -51,8 +58,56 @@
     
 }
 
+-(void)createTableView{
+    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, HEIGH/4, WIDTH, HEIGH) style:UITableViewStylePlain];
+    [self.view addSubview:self.tableView];
+    self.tableView.bounces = YES;
+    self.tableView.dataSource = self;
+    self.tableView.delegate = self;
+}
+
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return 50;
+}
+
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return 100;
+}
+
+-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
+    if (!cell) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"cell"];
+    }
+    cell.textLabel.text = @"哈哈";
+    return cell;
+}
+
 -(void)createView{
-    
+    self.view1 = [[HeaderView alloc] initWithFrame:CGRectMake(0, 0, WIDTH, HEIGH/4)];
+    [self.view addSubview:self.view1];
+    self.view1.backgroundColor = COLOR;
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    float num = self.view1.frame.origin.y;
+    float num1 = self.tableView.frame.origin.y;
+    NSLog(@"%f", num1);
+    if (scrollView.contentOffset.y > 0) {
+        if (num1 <= 0) {
+            self.view1.frame = CGRectMake(0, -HEIGH/4, WIDTH, HEIGH/4);
+            self.tableView.frame = CGRectMake(0, 0, WIDTH, HEIGH);
+            return;
+        }
+    } else {
+        if (num1 >= HEIGH/4) {
+            self.view1.frame = CGRectMake(0, 0, WIDTH, HEIGH/4);
+            self.tableView.frame = CGRectMake(0, HEIGH/4, WIDTH, HEIGH);
+            return;
+        }
+    }
+    self.view1.frame = CGRectMake(0, num-scrollView.contentOffset.y, WIDTH, HEIGH/4);
+    self.tableView.frame = CGRectMake(0, num1-scrollView.contentOffset.y, WIDTH, HEIGH);
 }
 
 - (void)didReceiveMemoryWarning {
