@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11542" systemVersion="16C68" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="IHb-kM-j69">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16C68" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="IHb-kM-j69">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11524"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -34,7 +33,7 @@
             <objects>
                 <navigationController id="LUb-jl-E0D" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="我的" image="four_1" selectedImage="four_2" id="Xa2-gg-gGl" customClass="ANTabBarItem"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="gcd-N1-CMe">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="gcd-N1-CMe">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <textAttributes key="titleTextAttributes">
@@ -109,7 +108,7 @@
             <objects>
                 <navigationController id="dcR-Ai-ZZK" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="首页" image="one_1" selectedImage="one_2" id="O8I-7f-3rl" customClass="ANTabBarItem"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Lcy-ZS-yLK">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="Lcy-ZS-yLK">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>

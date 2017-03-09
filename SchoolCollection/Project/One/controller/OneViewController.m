@@ -9,13 +9,14 @@
 #import "OneViewController.h"
 #import "UINavigationBar+Awesome.h"
 #import "HeaderView.h"
-#import <MJRefresh/MJRefresh.h>
 
 @interface OneViewController () <UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate>
 
 @property (nonatomic, strong)HeaderView *view1;
 
 @property (nonatomic, strong)UITableView *tableView;
+
+@property (nonatomic, strong)NSMutableArray *marr;
 
 @end
 
@@ -25,8 +26,8 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     [self setNavigationView];
+    [self createData];
     [self createView];
-    [self createTableView];
 }
 
 #pragma -mark 设置navigation
@@ -58,20 +59,71 @@
     
 }
 
+-(void)createData{
+    self.marr = [[NSMutableArray alloc] init];
+    for (int i=0; i<10; i++) {
+        [self.marr addObject:[NSString stringWithFormat:@"%d", i]];
+    }
+    [self createTableView];
+}
+
 -(void)createTableView{
     self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, HEIGH/4, WIDTH, HEIGH) style:UITableViewStylePlain];
     [self.view addSubview:self.tableView];
     self.tableView.bounces = YES;
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
+    
+    RefeshBase *base = [[RefeshBase alloc] init];
+
+    self.tableView.mj_header = [base createRefresh];
+    
+    self.tableView.mj_footer = [base createLoad];
+    
+    __weak typeof(self) weakSelf = self;
+    base.block1 = ^(){
+        [weakSelf loadNewData];
+    };
+    base.block2 = ^(){
+        [weakSelf loadLastData];
+    };
+}
+
+-(void)loadLastData{
+    for (int i=10; i<20; i++) {
+        [self.marr addObject:[NSString stringWithFormat:@"%d", i]];
+    }
+    __weak UITableView *tableView = self.tableView;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        // 刷新表格
+        [tableView reloadData];
+        
+        // 拿到当前的下拉刷新控件，结束刷新状态
+        [tableView.mj_footer endRefreshing];
+    });
+}
+
+-(void)loadNewData{
+    self.marr = [[NSMutableArray alloc] init];
+    for (int i=10; i<20; i++) {
+        [self.marr addObject:[NSString stringWithFormat:@"%d", i]];
+    }
+    __weak UITableView *tableView = self.tableView;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        // 刷新表格
+        [tableView reloadData];
+        
+        // 拿到当前的下拉刷新控件，结束刷新状态
+        [tableView.mj_header endRefreshing];
+    });
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 50;
+    return 100;
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 100;
+    return self.marr.count;
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -79,7 +131,7 @@
     if (!cell) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"cell"];
     }
-    cell.textLabel.text = @"哈哈";
+    cell.textLabel.text = self.marr[indexPath.row];
     return cell;
 }
 
@@ -92,22 +144,23 @@
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     float num = self.view1.frame.origin.y;
     float num1 = self.tableView.frame.origin.y;
-    NSLog(@"%f", num1);
     if (scrollView.contentOffset.y > 0) {
         if (num1 <= 0) {
             self.view1.frame = CGRectMake(0, -HEIGH/4, WIDTH, HEIGH/4);
             self.tableView.frame = CGRectMake(0, 0, WIDTH, HEIGH);
             return;
         }
+        self.view1.frame = CGRectMake(0, num-self.tableView.contentOffset.y/7, WIDTH, HEIGH/4);
+        self.tableView.frame = CGRectMake(0, num1-self.tableView.contentOffset.y/7, WIDTH, HEIGH);
     } else {
         if (num1 >= HEIGH/4) {
             self.view1.frame = CGRectMake(0, 0, WIDTH, HEIGH/4);
             self.tableView.frame = CGRectMake(0, HEIGH/4, WIDTH, HEIGH);
             return;
         }
+        self.view1.frame = CGRectMake(0, num-self.tableView.contentOffset.y*2, WIDTH, HEIGH/4);
+        self.tableView.frame = CGRectMake(0, num1-self.tableView.contentOffset.y*2, WIDTH, HEIGH);
     }
-    self.view1.frame = CGRectMake(0, num-scrollView.contentOffset.y, WIDTH, HEIGH/4);
-    self.tableView.frame = CGRectMake(0, num1-scrollView.contentOffset.y, WIDTH, HEIGH);
 }
 
 - (void)didReceiveMemoryWarning {
